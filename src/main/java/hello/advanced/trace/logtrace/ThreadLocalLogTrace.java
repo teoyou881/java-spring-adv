@@ -10,8 +10,6 @@ public class ThreadLocalLogTrace implements LogTrace {
   private static final String START_PREFIX = "-->";
   private static final String COMPLETE_PREFIX = "<--";
   private static final String EX_PREFIX = "<X-";
-  
-  // ThreadLocal을 사용하여 각 스레드마다 별도의 TraceId를 관리
   private ThreadLocal<TraceId> traceIdHolder = new ThreadLocal<>();
 
   @Override
@@ -61,8 +59,7 @@ public class ThreadLocalLogTrace implements LogTrace {
   private void releaseTraceId() {
     TraceId traceId = traceIdHolder.get();
     if (traceId.isFirstLevel()) {
-      // 스레드 로컬 변수를 제거하여 메모리 누수 방지
-      traceIdHolder.remove();
+      traceIdHolder.remove();// destroy
     } else {
       traceIdHolder.set(traceId.createPreviousId());
     }
